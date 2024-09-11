@@ -1,100 +1,106 @@
-## CLARA Monitor part
+# CLARA Logging & Monitor
 
 ## Project description
 
 A completar...
 
+## How to use
 
-##  Logging / Dashboards
+1. Download or clone repository.
+2. Run `pip install -r requeriments.txt` + Enter.
+3. Run the `deploy.sh` file, which deploys each service independently:
+   - The logging (external) can be consulted at [WhyLabs](https://whylabs.ai/).
+   - The monitor interface (internal) can be consulted on port `5004`.
 
-The extern logging and monitoring module tracks the model's performance in production using WhyLogs and WhyLabs. WhyLogs is used to log performance metrics, such as accuracy, precision, recall, and the number of predictions made over time. WhyLabs provides a monitoring platform that visualizes these metrics and helps identify trends and potential issues. This module also monitors the system for any anomalies or significant drops in performance, triggering alerts if necessary. This ensures that the model remains reliable and any problems are addressed promptly.
+## Previous considerations 
 
-The Logging/Monitor module is responsible for continuously monitoring the performance of the classification model in production. It logs performance metrics, detects any drifts or degradation in model accuracy, and stores these logs for further analysis. This module uses WhyLogs for logging and APScheduler to schedule regular monitoring tasks. MongoDB is used to store logs and related metadata. Here is a detailed description of its functionalities:
+The complete functioning of CLARA can be consulted in this repository. For the operation of the Logging and Monitor modules, the ones exposed in this repository, it is necessary a database that stores the predictions and revisions in the expected way, this is:
 
-### Key Features:
+- `filename`: (string) base name of the image.
+- `output_confidence`: (float) (optional) confidence of the max class predicted.
+- `output_prediction`: (int) predicted class.
+- `output_validated`: (bool) if it is validated the prediction.
+- `timestamp`: (string/timestamp) timestamp of the prediction.
+- `trained`: (bool) (optional) if it is already used for retraining.
+- `logged`: (bool) if is is already logged to the external logging.
+- `timestamp_validated`: (string/timestamp) timestamp of the validation.
 
-1. **Performance Logging**:
-   - Utilizes WhyLogs to log performance metrics of the classification model.
-   - Monitors various aspects of the model's performance, such as accuracy, precision, and recall.
+A MongoDB has been used in the implementation. If you wish to use another database, it would be necessary to update the corresponding part of the code, maintaining the described structure.
 
-2. **Drift Detection**:
-   - Detects any drifts in the model's performance over time.
-   - Identifies potential issues that may require retraining or adjustment of the model.
+##  Logging (External)
 
-3. **Data Storage**:
-   - Stores logged performance metrics and related metadata in a MongoDB database.
-   - Provides a robust system for retrieving and analyzing historical performance data.
+The Logging module tracks the model's performance in production. It logs various performance metrics, including accuracy, precision, recall, and the number of predictions made over time. A monitoring platform visualizes these metrics, helping identify trends and potential issues. Additionally, this module monitors the system for any anomalies or significant drops in performance, triggering alerts when necessary to ensure the model remains reliable and any problems are promptly addressed.
 
-4. **Scheduling**:
-   - Uses APScheduler to schedule regular monitoring tasks.
-   - Ensures continuous and timely monitoring of the model's performance.
+### Key features
 
-### Detailed Functionalities:
+Key features of the module include performance logging, drift detection, data storage, and scheduling.
 
-1. **Environment Configuration**:
-   - Sets environment variables for WhyLabs and MongoDB connection details.
-   - Configures the organization ID, API key, and dataset ID for WhyLabs.
+- **Performance logging** involves logging various aspects of the classification model's performance.
+- **Drift detection** identifies any changes in the model's performance over time.
+- **Data storage** ensures that logged performance metrics and related metadata are stored in a database, providing a robust system for retrieving and analyzing historical performance data.
+- A **scheduler** ensures regular monitoring tasks, ensuring continuous and timely monitoring of the model's performance.
 
-2. **Database Connection**:
-   - Establishes a connection to MongoDB using the provided URI and database name.
-   - Handles connection errors and ensures reliable database access.
+### Functionalities
 
-3. **Monitoring Task**:
-   - `check_and_log_new_entries()`: Fetches new entries from the database and logs their performance metrics.
-   - Integrates with WhyLogs to create and store performance logs.
+The module's functionalities include environment configuration, database connection, monitoring tasks, scheduler initialization, and error handling.
 
-4. **Scheduler Initialization**:
-   - Initializes a blocking scheduler to run the monitoring task at regular intervals.
-   - Ensures the monitoring process runs continuously without manual intervention.
+- **Environment configuration** involves setting environment variables for the monitoring platform.
+- **Database connection** uses the provided URI and database name to establish a connection to the database, ensuring reliable database access.
+- The **monitoring task** fetches new entries from the database and logs their performance metrics, integrating with the logging platform to create and store performance logs.
+- **Scheduler initialization** sets up a blocking scheduler to run the monitoring task regularly, ensuring the monitoring process runs continuously without manual intervention.
+- **Error handling** entails logging errors encountered during database connection and monitoring tasks, and providing feedback on the status of the monitoring process.
 
-5. **Error Handling**:
-   - Log errors encountered during database connection and monitoring tasks.
-   - Provides feedback on the status of the monitoring process.
+### Implementation
 
-This module ensures continuous tracking of the classification model's performance, allowing for timely detection of issues and maintaining the model's accuracy and reliability over time. Integrating MongoDB provides a reliable storage solution for performance metrics and related data. It can be deployed simultaneously with the internal Monitor module.
+The module has been implemented using WhyLogs and WhyLabs. [WhyLogs](https://whylabs.ai/whylogs) is a logging library that captures various performance metrics, and [WhyLabs](https://whylabs.ai/whylogs) is a platform that helps identify trends and potential issues.
 
-![Logging / Dashboards](images/logs.png "Logs")
 
-## Monitor
+![Logging interface](images/logs.png "Logs")
 
-The  intern monitoring module is designed to track the performance of the classification model in production. Using charts, it provides a web interface to visualize various performance metrics in a selected time range. This module utilizes Flask for the backend, MongoDB for data storage, and Chart.js for creating interactive charts. Here is a detailed description of its functionalities:
+## Monitor (Internal)
 
-### Key Features:
+The Monitor module is designed to track the performance of the classification model in production. Using charts, it provides a web interface that visualizes various performance metrics over a selected time range. The module utilizes a web framework for the backend, a database for data storage, and a charting library for creating interactive charts.
 
-1. **Web Interface**:
-   - Flask is utilized to create a web interface for monitoring.
-   - Provides different tabs to visualize various aspects of model performance.
+### Key features
 
-2. **Data Fetching**:
-   - Fetches data from MongoDB based on user-specified date ranges.
-   - Calculates performance metrics such as precision, accuracy, recall, and F1 score.
+Key features of this module include a web interface, data fetching, and charts.
 
-3. **Charts**:
-   - Uses Chart.js to create interactive charts for visualizing metrics.
-   - Includes line charts for overall metrics and bar charts for class-specific metrics.
+- The **web interface** allows users to monitor model performance through various tabs.
+- **Data fetching** retrieves logs based on user-specified date ranges, and performance metrics such as precision, accuracy, recall, and F1 score are calculated.
+- **Interactive charts** visualize these metrics, including line charts for overall metrics and bar charts for class-specific metrics.
 
-### Detailed Functionalities:
 
-1. **Environment Configuration**:
-   - Configures connection details for MongoDB.
+### Functionalities
 
-2. **Database Connection**:
-   - Establishes a connection to MongoDB using the provided URI and database name.
-   - Fetches data based on the date range specified by the user.
+The detailed functionalities include environment configuration, database connection, metrics calculation, chart initialization, and web interface tabs.
 
-3. **Metrics Calculation**:
-   - Calculates daily metrics for precision, accuracy, recall, and F1 score.
-   - Aggregates these metrics to provide an overall performance view.
+- **Environment configuration** involves setting up connection details for the database.
+- A **connection to the database** is established using the provided URI and database name, and data is fetched based on the user-specified date range.
+- **Metrics calculation** computes daily precision, accuracy, recall, and F1 score, which are then aggregated to provide an overall performance view.
+- **Chart initialization** visualizes these metrics, with line charts for daily metrics and bar charts for metrics by class.
 
-4. **Chart Initialization**:
-   - Initializes Chart.js charts for visualizing metrics.
-   - Includes line charts for daily metrics and bar charts for metrics by class.
+### Web interface tabs
 
-5. **Web Interface Tabs**:
-   - **Main Tab**: Provides an overview of validated samples and metrics.
-   - **Metrics Tab**: Displays separate line charts for precision, accuracy, recall, and F1 score.
-   - **Samples by Class Tab**: A pie chart of validated samples by class.
-   - **Metrics by Class Tab**: Displays bar charts of precision, recall, and F1 score by class.
-   - **Training Data Tab**: A pie chart of samples by class of training dataset.
+The web interface includes several tabs:
 
-This module can be modified depending on the task's necessities and deployed simultaneously with the external Logs / Dashboards module.
+- The **main tab** provides an overview of the validated samples and metrics.
+- The **metrics tab** displays separate line charts for precision, accuracy, recall, and F1 score.
+- The **samples by class tab** features a pie chart of validated samples by class.
+- The **metrics by class tab** displays bar charts of precision, recall, and F1 score by class.
+- The **training data tab** includes a pie chart of samples by class from the training dataset.
+
+
+### Implementation
+
+The module has been implemented using Flask and [Chart.js](https://www.chartjs.org/), a JavaScript library for creating interactive charts.
+
+![Monitor interface module.](figures/monitor.png)
+
+## Alternatives
+
+Additionally, other libraries and platforms were considered:
+
+- [Evidently](https://www.evidentlyai.com/), a tool for evaluating and monitoring the performance of machine learning models, providing detailed reports and visualizations of model metrics.
+- [Grafana + Prometheus](https://prometheus.io/docs/visualization/grafana/), where Grafana is an open-source platform for monitoring and observability, providing dashboards and visualizations, and Prometheus is a monitoring system and time-series database that collects metrics and data.
+- [alibi-detect](https://docs.seldon.io/projects/alibi-detect), a library focused on detecting outliers, adversarial instances, and concept drift in machine learning models, ensuring the robustness and reliability of the deployed models.
+
