@@ -94,7 +94,7 @@ The web interface includes several tabs:
 
 The module has been implemented using Flask and [Chart.js](https://www.chartjs.org/), a JavaScript library for creating interactive charts.
 
-![Monitor interface module.](figures/monitor.png)
+![Monitor interface module.](images/charts.png)
 
 ## Alternatives
 
