@@ -2,7 +2,7 @@
 
 ## Project description
 
-A completar...
+This repository refers to the [CLARA](https://github.com/RECICLAI-VRAIN/reciclai-mlops) system Logging and Monitoring modules, as well as adapting them to the changes required or if only one of these modules needs to be deployed.
 
 ## How to use
 
@@ -14,7 +14,7 @@ A completar...
 
 ## Previous considerations 
 
-The complete functioning of CLARA can be consulted in this repository. For the operation of the Logging and Monitor modules, the ones exposed in this repository, it is necessary a database that stores the predictions and revisions in the expected way, this is:
+The complete functioning of CLARA can be consulted in this [repository](https://github.com/RECICLAI-VRAIN/reciclai-mlops). For the operation of the Logging and Monitor modules, the ones exposed in this repository, it is necessary a database that stores the predictions and revisions in the expected way, this is:
 
 - `filename`: (string) base name of the image.
 - `output_confidence`: (float) (optional) confidence of the max class predicted.
