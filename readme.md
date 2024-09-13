@@ -1,4 +1,4 @@
-# CLARA Logging & Monitor
+# IA system Logging & Monitor
 
 ## Project description
 
@@ -14,7 +14,7 @@ This repository refers to the [CLARA](https://github.com/RECICLAI-VRAIN/reciclai
 
 ## Previous considerations 
 
-The complete functioning of CLARA can be consulted in this [repository](https://github.com/RECICLAI-VRAIN/reciclai-mlops). For the operation of the Logging and Monitor modules, the ones exposed in this repository, it is necessary a database that stores the predictions and revisions in the expected way, this is:
+For the operation of the Logging and Monitor modules, the ones exposed in this repository, it is necessary a database that stores the predictions and revisions in the expected way, this is:
 
 - `filename`: (string) base name of the image.
 - `output_confidence`: (float) (optional) confidence of the max class predicted.
