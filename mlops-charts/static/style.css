@@ -1,0 +1,34 @@
+.metrics-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.metric-section {
+    flex: 1 1 100%;
+    padding: 10px;
+}
+
+.class-count,
+.metric-count {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+@media (min-width: 576px) {
+    .metric-section {
+        flex: 1 1 45%;
+    }
+}
+
+@media (min-width: 768px) {
+    .metric-section {
+        flex: 1 1 30%;
+    }
+}
+
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}

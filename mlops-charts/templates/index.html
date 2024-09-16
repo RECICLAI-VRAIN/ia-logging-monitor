@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReciclAI Monitor</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">ReciclAI Monitor</h1>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="main-tab" data-toggle="tab" href="#main" role="tab" aria-controls="main"
+                    aria-selected="true">Main</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="metrics-tab" data-toggle="tab" href="#metrics" role="tab"
+                    aria-controls="metrics" aria-selected="false">Metrics</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="class-bar-tab" data-toggle="tab" href="#class-bar" role="tab"
+                    aria-controls="class-bar" aria-selected="false">Samples by Class</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="class-metrics-tab" data-toggle="tab" href="#class-metrics" role="tab"
+                    aria-controls="class-metrics" aria-selected="false">Metrics by Class</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="training-tab" data-toggle="tab" href="#training" role="tab"
+                    aria-controls="training" aria-selected="false">Training Data</a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="main" role="tabpanel" aria-labelledby="main-tab">
+                <div class="form-inline mt-4">
+                    <div class="form-group">
+                        <label for="start-date-main">Start Date</label>
+                        <input type="date" id="start-date-main" class="form-control mx-sm-2 date-sync">
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date-main">End Date</label>
+                        <input type="date" id="end-date-main" class="form-control mx-sm-2 date-sync">
+                    </div>
+                    <button class="btn btn-primary" onclick="fetchData()">Update</button>
+                </div>
+                <div class="mt-4">
+                    <h3><b>Total Validated Samples: </b><span id="total-validated"></span></h3>
+                    <div class="metrics-container">
+                        <div class="metric-section">
+                            <h3><b>Validated Samples by Class</b></h3>
+                            <div id="class-counts" class="d-flex flex-wrap"></div>
+                        </div>
+                        <div class="metric-section">
+                            <h3><b>General Metrics</b></h3>
+                            <div id="metric-counts" class="d-flex flex-wrap"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <canvas id="metricsChart"></canvas>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="metrics" role="tabpanel" aria-labelledby="metrics-tab">
+                <div class="form-inline mt-4">
+                    <div class="form-group">
+                        <label for="start-date-metrics">Start Date</label>
+                        <input type="date" id="start-date-metrics" class="form-control mx-sm-2 date-sync">
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date-metrics">End Date</label>
+                        <input type="date" id="end-date-metrics" class="form-control mx-sm-2 date-sync">
+                    </div>
+                    <button class="btn btn-primary" onclick="fetchData()">Update</button>
+                </div>
+                <div class="mt-4 row">
+                    <div class="col-md-6">
+                        <canvas id="precisionChart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <canvas id="recallChart"></canvas>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <canvas id="f1Chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="class-bar" role="tabpanel" aria-labelledby="class-bar-tab">
+                <div class="form-inline mt-4">
+                    <div class="form-group">
+                        <label for="start-date-class-bar">Start Date</label>
+                        <input type="date" id="start-date-class-bar" class="form-control mx-sm-2 date-sync">
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date-class-bar">End Date</label>
+                        <input type="date" id="end-date-class-bar" class="form-control mx-sm-2 date-sync">
+                    </div>
+                    <button class="btn btn-primary" onclick="fetchData()">Update</button>
+                </div>
+                <div class="mt-4">
+                    <canvas id="classBarChart"></canvas>
+                </div>
+                <div class="mt-4">
+                    <canvas id="classBarChartBar"></canvas>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="class-metrics" role="tabpanel" aria-labelledby="class-metrics-tab">
+                <div class="form-inline mt-4">
+                    <div class="form-group">
+                        <label for="start-date-class-metrics">Start Date</label>
+                        <input type="date" id="start-date-class-metrics" class="form-control mx-sm-2 date-sync">
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date-class-metrics">End Date</label>
+                        <input type="date" id="end-date-class-metrics" class="form-control mx-sm-2 date-sync">
+                    </div>
+                    <button class="btn btn-primary" onclick="fetchData()">Update</button>
+                </div>
+                <div class="mt-4 row">
+                    <div class="col-md-6">
+                        <canvas id="precisionByClassChart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="recallByClassChart"></canvas>
+                    </div>
+                    <div class="col-md-6 mt-4">
+                        <canvas id="f1ByClassChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="training" role="tabpanel" aria-labelledby="training-tab">
+                <div class="mt-4">
+                    <canvas id="trainingChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const metricColors = {
+            "Precision": "rgba(75, 192, 192, 1)",
+            "Accuracy": "rgba(54, 162, 235, 1)",
+            "Recall": "rgba(153, 102, 255, 1)",
+            "F1": "rgba(255, 159, 64, 1)",
+        };
+
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const minDate = '2024-05-08';
+            const maxDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' });
+
+            const startDateInputs = document.querySelectorAll('.date-sync[id^="start-date"]');
+            const endDateInputs = document.querySelectorAll('.date-sync[id^="end-date"]');
+
+            startDateInputs.forEach(input => {
+                input.setAttribute('min', minDate);
+                input.setAttribute('max', maxDate);
+                input.value = new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0];
+            });
+
+            endDateInputs.forEach(input => {
+                input.setAttribute('min', minDate);
+                input.setAttribute('max', maxDate);
+                input.value = new Date().toISOString().split('T')[0];
+            });
+
+            startDateInputs.forEach(input => input.addEventListener('change', syncDates));
+            endDateInputs.forEach(input => input.addEventListener('change', syncDates));
+
+            fetchData();
+            fetchTrainingData();
+        });
+
+        function syncDates(event) {
+            const dateType = event.target.id.includes('start') ? 'start' : 'end';
+            const newValue = event.target.value;
+
+            document.querySelectorAll(`.date-sync[id^="${dateType}-date"]`).forEach(input => {
+                input.value = newValue;
+            });
+
+            fetchData();
+        }
+
+        async function fetchTrainingData() {
+            const response = await fetch('/training-data');
+            const trainingData = await response.json();
+
+            createChart('trainingChart', 'pie', {
+                labels: Object.keys(trainingData.class_counts),
+                datasets: [{
+                    label: 'Training Samples by Class',
+                    data: Object.values(trainingData.class_counts),
+                    backgroundColor: Object.keys(trainingData.class_counts).map(label => trainingData.color_dict[label])
+                }]
+            }, {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Training Samples by Class' }
+                },
+                animation: false
+            });
+        }
+
+        async function fetchData() {
+            const activeTab = document.querySelector('.tab-pane.active');
+            const startDate = activeTab.querySelector('[id^="start-date"]').value;
+            const endDate = activeTab.querySelector('[id^="end-date"]').value;
+
+            const response = await fetch(`/data?start_date=${startDate}&end_date=${endDate}`);
+            const data = await response.json();
+
+            document.getElementById('total-validated').innerText = data.total_validated;
+
+            updateMetrics(data);
+            updateCharts(data);
+        }
+
+        function updateMetrics(data) {
+            const classCountsList = document.getElementById('class-counts');
+            const metricCountsList = document.getElementById('metric-counts');
+
+            classCountsList.innerHTML = '';
+            metricCountsList.innerHTML = '';
+
+            for (const [cls, count] of Object.entries(data.class_counts)) {
+                const div = document.createElement('div');
+                div.className = 'class-count';
+                div.style.backgroundColor = data.color_dict[cls];
+                div.innerText = count;
+                classCountsList.appendChild(div);
+            }
+
+            for (const [metric, value] of Object.entries(data.metrics)) {
+                const div = document.createElement('div');
+                div.className = 'metric-count';
+                div.style.backgroundColor = metricColors[metric.charAt(0).toUpperCase() + metric.slice(1)];
+                div.innerText = value.toFixed(2);
+                metricCountsList.appendChild(div);
+            }
+        }
+
+        function updateCharts(data) {
+            const labels = Object.keys(data.daily_metrics).map(date => {
+                const entries = data.daily_metrics[date].entries;
+                return `${date}\n(${entries !== undefined ? entries : 'No data'})`;
+            });
+
+            const chartData = {
+                precision: [],
+                accuracy: [],
+                recall: [],
+                f1: []
+            };
+
+            Object.values(data.daily_metrics).forEach(metric => {
+                chartData.precision.push(metric.precision);
+                chartData.accuracy.push(metric.accuracy);
+                chartData.recall.push(metric.recall);
+                chartData.f1.push(metric.f1);
+            });
+
+            if (document.getElementById('metricsChart')) {
+                createLineChart('metricsChart', labels, chartData);
+            }
+
+            if (document.getElementById('precisionChart')) {
+                createLineChart('precisionChart', labels, { precision: chartData.precision });
+            }
+
+            if (document.getElementById('accuracyChart')) {
+                createLineChart('accuracyChart', labels, { accuracy: chartData.accuracy });
+            }
+
+            if (document.getElementById('recallChart')) {
+                createLineChart('recallChart', labels, { recall: chartData.recall });
+            }
+
+            if (document.getElementById('f1Chart')) {
+                createLineChart('f1Chart', labels, { f1: chartData.f1 });
+            }
+
+            if (document.getElementById('classBarChart')) {
+                createPieChart('classBarChart', data.class_counts, data.color_dict);
+            }
+
+            if (document.getElementById('classBarChartBar')) {
+                createBarChart('classBarChartBar', data.class_counts, data.color_dict);
+            }
+
+            if (document.getElementById('precisionByClassChart')) {
+                createClassMetricBarChart('precisionByClassChart', data.class_metrics, data.color_dict, 'precision');
+            }
+
+            if (document.getElementById('recallByClassChart')) {
+                createClassMetricBarChart('recallByClassChart', data.class_metrics, data.color_dict, 'recall');
+            }
+
+            if (document.getElementById('f1ByClassChart')) {
+                createClassMetricBarChart('f1ByClassChart', data.class_metrics, data.color_dict, 'f1');
+            }
+        }
+
+        function createLineChart(id, labels, data) {
+            if (charts[id]) {
+                charts[id].destroy();
+            }
+
+            const datasets = Object.keys(data).map(key => ({
+                label: key.charAt(0).toUpperCase() + key.slice(1),
+                data: data[key],
+                borderColor: metricColors[key.charAt(0).toUpperCase() + key.slice(1)],
+                fill: false
+            }));
+
+            charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Date (n.º samples)' } },
+                        y: { beginAtZero: true, min: 0, max: 1, title: { display: true, text: 'Metrics' } }
+                    },
+                    animation: false
+                }
+            });
+        }
+
+        function createPieChart(id, counts, colors) {
+            const labels = Object.keys(counts);
+            const data = Object.values(counts);
+            const backgroundColor = labels.map(label => colors[label]);
+
+            createChart(id, 'pie', {
+                labels,
+                datasets: [{ label: 'Samples by Class', data, backgroundColor }]
+            }, {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Samples by Class' }
+                },
+                animation: false
+            });
+        }
+
+        function createBarChart(id, counts, colors) {
+            const labels = Object.keys(counts);
+            const data = Object.values(counts);
+            const backgroundColor = labels.map(label => colors[label]);
+
+            createChart(id, 'bar', {
+                labels,
+                datasets: [{ label: 'Samples by Class', data, backgroundColor }]
+            }, {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Class' } },
+                    y: { beginAtZero: true, title: { display: true, text: 'Count' } }
+                },
+                animation: false
+            });
+        }
+
+        function createClassMetricBarChart(id, metrics, colors, metric) {
+            const labels = Object.keys(metrics);
+            const data = labels.map(label => metrics[label][metric]);
+            const backgroundColor = labels.map(label => colors[label]);
+
+            createChart(id, 'bar', {
+                labels,
+                datasets: [{
+                    label: `${metric.charAt(0).toUpperCase() + metric.slice(1)} by Class`,
+                    data,
+                    backgroundColor
+                }]
+            }, {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Class' } },
+                    y: { beginAtZero: true, min: 0, max: 1, title: { display: true, text: metric.charAt(0).toUpperCase() + metric.slice(1) } }
+                },
+                animation: false
+            });
+        }
+
+        function createChart(id, type, data, options) {
+            if (charts[id]) {
+                charts[id].destroy();
+            }
+
+            charts[id] = new Chart(document.getElementById(id).getContext('2d'), { type, data, options });
+        }
+
+        $('#myTab a').on('shown.bs.tab', function (e) {
+            const activeTab = $(e.target).attr('href');
+            if (activeTab !== '#training') {
+                fetchData();
+            }
+        });
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
